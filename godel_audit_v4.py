@@ -129,6 +129,10 @@ class GoedelInformedNetworkV4(nn.Module):
 # ============================================================
 
 def code_to_latent_tensor(code_content, features=8):
+    """
+    Mapeo de ALTA RESOLUCIÓN.
+    Coeficientes amplificados. Sin log1p.
+    """
     if not code_content.strip():
         return torch.zeros(1, features)
 
@@ -149,23 +153,17 @@ def code_to_latent_tensor(code_content, features=8):
     noise_ratio = (comment_lines + empty_lines) / max(len(lines), 1)
 
     raw = [
-        char_count * 0.002,
-        non_empty_count * 0.1,
-        num_defs * 0.6,
-        num_loops * 0.8,
-        num_try * 1.0,
-        deep_indent * 0.4,
-        num_branches * 0.5,
-        noise_ratio * 2.0,
+        char_count * 0.01,
+        non_empty_count * 0.5,
+        num_defs * 3.0,
+        num_loops * 4.0,
+        num_try * 5.0,
+        deep_indent * 2.0,
+        num_branches * 2.5,
+        noise_ratio * 10.0,
     ]
 
-    # CRÍTICO: normalización log1p
-    raw_normalized = [
-        math.log1p(abs(v)) * (1 if v >= 0 else -1)
-        for v in raw
-    ]
-
-    return torch.tensor([raw_normalized[:features]], dtype=torch.float32)
+    return torch.tensor([raw[:features]], dtype=torch.float32)
 
 
 # ============================================================
