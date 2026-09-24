@@ -36,7 +36,7 @@ Si el sistema se desvía, el canal de propagación se atenúa automáticamente.
 @st.cache_resource
 def load_godel_model():
     """Carga el modelo entrenado desde el checkpoint."""
-    checkpoint_path = "godel_model_production.pt"
+    checkpoint_path = "godel_model_v6.pt"
 
     if not os.path.exists(checkpoint_path):
         return None, None
