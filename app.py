@@ -36,7 +36,7 @@ Si el sistema se desvía, el canal de propagación se atenúa automáticamente.
 @st.cache_resource
 def load_godel_model():
     """Carga el modelo entrenado desde el checkpoint."""
-    checkpoint_path = "godel_model_v6.pt"
+    checkpoint_path = "godel_model_v7.pt"
 
     if not os.path.exists(checkpoint_path):
         return None, None
@@ -75,7 +75,7 @@ if checkpoint:
     st.sidebar.markdown(f"- γ_IR final: `{training_metrics.get('final_gamma_ir', 0.093135):.6f}`")
     st.sidebar.markdown(f"- Anomalías finales: `{training_metrics.get('final_anomalies', 1)}/500`")
 else:
-    st.sidebar.error("⚠️ Modelo no cargado. Verifica `godel_model_production.pt`.")
+    st.sidebar.error("⚠️ Modelo no cargado. Verifica `godel_model_v7.pt`.")
 
 # ============================================================
 # INPUT: CÓDIGO A AUDITAR
@@ -104,7 +104,7 @@ with col2:
 
 if audit_button:
     if not model:
-        st.error("❌ No se encontró el modelo. Verifica `godel_model_production.pt`.")
+        st.error("❌ No se encontró el modelo. Verifica `godel_model_v7.pt`.")
     elif not code_input.strip():
         st.warning("⚠️ Introduce algo de código antes de auditar.")
     else:
