@@ -18,7 +18,24 @@ AUDITOR-0 verifies whether a system preserves its **topological fixed point** un
 
 A system that preserves the fixed point (γ = 0.0931) is **true**. A system that drifts from the fixed point is a **structural lie**.
 
-**Text auditing is in development** and will be available in a future release.
+**Text auditing is in development** and will be available in a ## Supported Languages
+
+AUDITOR-0 currently supports:
+
+- **Python** ✅ (available now)
+
+Coming soon:
+
+- **JavaScript** 🔜
+- **C/C++** 🔜
+- **Rust** 🔜
+- **Go** 🔜
+- **Java** 🔜
+- **Text** (preprints, articles, essays) 🔜
+
+The same Gödel Guardrail is used for all languages. Only the mapping 
+(`code_to_latent_tensor`) changes. The fixed point γ = 0.0931 is universal.
+
 
 ---
 
