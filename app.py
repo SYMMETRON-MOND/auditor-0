@@ -19,7 +19,7 @@ st.markdown("""
     h1, h2, h3 { font-family: 'Courier New', Courier, monospace !important; color: #a3b8cc !important; }
     div[data-testid="stMetricValue"] { font-family: 'Courier New', Courier, monospace !important; font-size: 24px !important; color: #00ffcc !important; }
     </style>
-""", unsafe_allowed_html=True)
+""", unsafe_allow_html=True)
 
 # --- INICIALIZACIÓN DE ESTADOS DEL SISTEMA ---
 if 'system_status' not in st.session_state:
