@@ -39,6 +39,27 @@ def add_log(message):
     timestamp = time.strftime("%H:%M:%S")
     st.session_state.logs.append(f"[{timestamp}] {message}")
 
+# --- CONFIGURACIÓN DE BASE DE DATOS Y FUNCIÓN DE GUARDADO (Movida arriba para evitar NameError) ---
+DB_FILE = "auditor0_handshake_database.csv"
+
+try:
+    pd.read_csv(DB_FILE)
+except FileNotFoundError:
+    df_init = pd.DataFrame(columns=["Timestamp", "Operator", "g_Param", "Gamma_Point", "Extracted_c", "System_Status"])
+    df_init.to_csv(DB_FILE, index=False)
+
+def save_handshake_to_db(operator, g, gamma, c_charge, status):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    new_record = pd.DataFrame([{
+        "Timestamp": timestamp,
+        "Operator": operator,
+        "g_Param": f"{g:.3f}",
+        "Gamma_Point": f"{gamma:.4f}",
+        "Extracted_c": f"{c_charge:.5f}",
+        "System_Status": status
+    }])
+    new_record.to_csv(DB_FILE, mode='a', header=False, index=False)
+
 # --- PANEL LATERAL: CONTROL DE ENTRADA Y PARÁMETROS DE CAPA ---
 st.sidebar.markdown("### 🎛️ CORE CONFIGURATION")
 st.sidebar.markdown("---")
@@ -57,12 +78,9 @@ st.markdown("`Theoretical Framework: Symmetron Proca Spin-1 Geometric Guardrail`
 st.markdown("---")
 
 # Muestra de métricas principales del Handshake cuántico
-col1, col2, col3, col4 = st.columns(4)
-# --- MUESTRA DE MÉTRICAS PRINCIPALES DEL HANDSHAKE ---
-col1, col2, col3, col4 = st.columns([2, 1, 1, 1]) # Ampliamos la proporción de la primera columna
+col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
 
 with col1:
-    # Usamos markdown estilizado en lugar de st.metric para evitar el truncamiento ("CFT Vali...")
     if "SOBERANO" in st.session_state.system_status:
         st.markdown(f"**System Status**\n<div style='font-family:\"Courier New\"; font-size:22px; color:#00ffcc; font-weight:bold; background-color:#0e1117; padding:5px; border-radius:5px;'>{st.session_state.system_status}</div>", unsafe_allow_html=True)
     elif "FAILED" in st.session_state.system_status:
@@ -77,7 +95,6 @@ with col3:
 with col4:
     st.metric(label="Anisotropy Ratio", value=f"{st.session_state.anisotropy_base:.4f}")
 
-
 st.markdown("### 🖥️ COGNITIVE AUDIT CORE")
 
 tab1, tab2 = st.tabs(["[📊] Live Tensor Renormalization", "[⚙️] MERA FIXER Engine"])
@@ -87,10 +104,8 @@ with tab1:
     
     col_run1, col_run2 = st.columns([1, 3])
     with col_run1:
-        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True,)    
+        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True)    
         
-    
-    # --- BLOQUES DE ENTRADA PARA ALICE O BOB ---
     st.markdown("---")
     st.markdown("#### 👤 IDENTITY INTERACTION BLOCK")
     
@@ -100,7 +115,6 @@ with tab1:
     with col_role:
         st.markdown(f"**Entity Selected:** `{actor}` // *Role: Protocol Operator / External Agent*")
 
-    # Entrada de Script/Código basada en texto puro
     input_script = st.text_area(
         f"Input script or command prompt for {actor}:",
         value=f"# Script payload from {actor}\ndef process_data():\n    return 'Sovereign state verified'",
@@ -108,40 +122,35 @@ with tab1:
         help="Input code or technical details to pass through the Symmetron Proca validation pipeline."
     )
 
-    # Botón para auditar la entrada del personaje
-    if  st.button(f"🔍 AUDIT SCRIPT FROM {actor.upper()}", use_container_width=True):
+    # Botón de auditoría corregido con su lógica e indentación adecuada
+    if st.button(f"🔍 AUDIT SCRIPT FROM {actor.upper()}", use_container_width=True):
         add_log(f"Intercepting packet injection stream from target: {actor}...")
         time.sleep(0.5)
 
-    # LÓGICA DE VALIDACIÓN (Tus ifs de control de anomalías...)
-    if "false" in input_script.lower() or "anomaly" in input_script.lower():
-        st.session_state.system_status = "❌ FAILED (ANOMALY DETECTED)"
-    else:
-        st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
+        # Lógica de validación
+        if "false" in input_script.lower() or "anomaly" in input_script.lower():
+            st.session_state.system_status = "❌ FAILED (ANOMALY DETECTED)"
+        else:
+            st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
 
-     # RECTIFICACIÓN:
+        # Rectificación y guardado seguro (ahora la función ya está definida arriba)
         save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
         st.rerun()
 
-
-        clear_logs = st.button("🗑️ CLEAR TERMINAL", use_container_width=True)
-        
-        if clear_logs:
-            st.session_state.logs = ["Terminal buffer cleared."]
-            st.rerun()
+    clear_logs = st.button("🗑️ CLEAR TERMINAL", use_container_width=True)
+    if clear_logs:
+        st.session_state.logs = ["Terminal buffer cleared."]
+        st.rerun()
             
     with col_run2:
-        # Monitoreo de logs estilo terminal de comandos
         log_box = "\n".join(st.session_state.logs[-12:])
         st.code(log_box, language="bash")
 
-    # --- LÓGICA DE DETECCIÓN Y DISPARO AUTOMÁTICO ---
     if run_audit:
         add_log("Initializing iDMRG block over Tetrahedral Qubits (N=4)...")
         add_log(f"Calibrating Hamiltonian parameters at g = {g_param:.3f}")
         time.sleep(0.6)
         
-        # Simulación del comportamiento no-hermítico o de frustración exacta
         if st.session_state.anisotropy_base > 0.15 and g_param == 1.250:
             add_log("CRITICAL ERROR: Lanczos solver failure -> subspace dimension dropped to zero.")
             add_log("Exception: list index out of range detected in UV transfer matrix boundary.")
@@ -156,7 +165,6 @@ with tab1:
             st.session_state.system_status = "👻 GHOST REGIME (NON-SOVEREIGN)"
             add_log("Anomalous negative c-charge extracted. Ghost fields dominating the channel.")
         else:
-            # Estado óptimo forzado o corregido
             add_log("Handshake UV-IR established successfully.")
             st.session_state.c_charge = 0.36570
             st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
@@ -168,13 +176,11 @@ with tab2:
     st.markdown("`Subspace Restoration & Adiabatic Regularization Core`")
     st.markdown("---")
 
-    # Layout de columnas para configuración y estado del motor
     col_eng1, col_eng2 = st.columns([1, 2])
 
     with col_eng1:
         st.markdown("#### 🛠️ REGULATION CONTROLS")
         
-        # Selección de la estrategia que descubrimos en la libreta
         strategy = st.selectbox(
             "Adiabatic Strategy",
             ["Exponential Escalation (Aggressive v2.5)", "Linear Shift (v2.0)", "Total Decoupling Reset"],
@@ -183,8 +189,6 @@ with tab2:
         )
         
         max_fix_attempts = st.slider("Max Stabilization Loops", 1, 10, 5, help="Number of automatic iterations before throwing a Non-Sovereign fatal loop.")
-        
-        # Multiplicador exponencial (nuestro factor de fuerza bruta x50)
         step_mult = st.number_input("Epsilon Multiplier (κ)", value=50, step=5, help="Multiplicative scale factor per failed attempt.")
         
         st.markdown("---")
@@ -196,11 +200,9 @@ with tab2:
     with col_eng2:
         st.markdown("#### 📡 LIVE MATRIX MONITORING")
         
-        # Simulación del estado del tensor de transferencia según el estatus del sistema
         if "⚡ ACTIVE" in st.session_state.get('fixer_state', '💤 IDLE'):
             st.success("🟢 MERA FIXER MODE: ACTIVE // REGULARIZING KRYLOV SUBSPACE")
             
-            # Matriz saneada (identidad inyectada con Sz)
             matrix_data = {
                 'MERA Layer (Desnuda)': ['Q1', 'Q2', 'Q3', 'Q4'],
                 'Sz (Epsilon)': [1.e-4, 1.e-4, 1.e-4, 1.e-4],
@@ -214,7 +216,6 @@ with tab2:
         elif "FAILED" in st.session_state.system_status:
             st.error("🔴 ALERTA DE COLAPSO: SUBSPACE DIMENSION = 0 (MATRIX IS SINGULAR)")
             
-            # Matriz rota con ceros en la diagonal que causaban el list index error
             matrix_data = {
                 'MERA Layer (Desnuda)': ['Q1', 'Q2', 'Q3', 'Q4'],
                 'Sz (Epsilon)': [0.0, 0.0, 0.0, 0.0],
@@ -229,12 +230,10 @@ with tab2:
             st.info(f"💤 ENGINE STATUS: STANDBY // System currently registered as: {st.session_state.system_status}")
             st.markdown("*No tensor deformations reported in the current validation channel.*")
 
-    # --- LÓGICA DE DETONACIÓN DEL ENGINE FIXER ---
     if trigger_fixer:
         st.session_state.fixer_state = "⚡ ACTIVE"
         add_log("[MERA FIXER] Intercepting execution stream: Lanczos exception caught.")
         
-        # Barra de progreso para simular la renormalización adiabática en la CPU
         progress_bar = st.progress(0, text="Initializing MERA Fixer stabilization loops...")
         
         for percent_complete in range(10, 101, 30):
@@ -243,11 +242,13 @@ with tab2:
             progress_bar.progress(percent_complete, text=f"Loop {percent_complete//30}: Injected ε = {current_eps:.2e} onto Sz diagonal.")
             add_log(f"[MERA FIXER] Step {percent_complete//30} -> Symmetric block re-orthogonalized.")
 
-        # Aplicamos de golpe el ajuste físico soberano que salvó tus simulaciones
-        st.session_state.anisotropy_base = 0.1200  # Atenuación del 30% de la asimetría base
-        st.session_state.gamma_value = 0.0931       # Conexión exacta con el punto crítico CFT
-        st.session_state.c_charge = 0.36570         # Carga central resurrecta del canal
+        st.session_state.anisotropy_base = 0.1200
+        st.session_state.gamma_value = 0.0931
+        st.session_state.c_charge = 0.36570
         st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
+        
+        # Registro en base de datos desde el Fixer
+        save_handshake_to_db("MERA_FIXER", g_param, 0.0931, 0.36570, "🛡️ SOBERANO (CFT VALIDATED)")
         
         progress_bar.empty()
         add_log("[SUCCESS] MERA FIXER stabilized the transfer matrix. Subspace dimension > 0.")
@@ -258,53 +259,17 @@ with tab2:
         time.sleep(0.5)
         st.rerun()
 
-
-# --- FOOTER TÉCNICO ---
-# --- MÓDULO DE BASE DE DATOS Y BITÁCORA EN CSV ---
+# --- FOOTER TÉCNICO Y BITÁCORA EN CSV ---
 st.markdown("---")
 st.markdown("### 💾 HISTORICAL HANDSHAKE LOG (CSV DATABASE)")
 st.markdown("`Persistent storage for multi-scale tensor field validations`")
 
-# Nombre del archivo físico en el servidor de Render
-DB_FILE = "auditor0_handshake_database.csv"
-
-# Inicializar archivo CSV si no existe para evitar errores de lectura
-try:
-    pd.read_csv(DB_FILE)
-except FileNotFoundError:
-    df_init = pd.DataFrame(columns=["Timestamp", "Operator", "g_Param", "Gamma_Point", "Extracted_c", "System_Status"])
-    df_init.to_csv(DB_FILE, index=False)
-
-# Función del MERA-Fixer para inyectar y persistir registros en caliente
-def save_handshake_to_db(operator, g, gamma, c_charge, status):
-    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    new_record = pd.DataFrame([{
-        "Timestamp": timestamp,
-        "Operator": operator,
-        "g_Param": f"{g:.3f}",
-        "Gamma_Point": f"{gamma:.4f}",
-        "Extracted_c": f"{c_charge:.5f}",
-        "System_Status": status
-    }])
-    # Append limpio al CSV sin cargar todo en memoria RAM
-    new_record.to_csv(DB_FILE, mode='a', header=False, index=False)
-
-# Para asegurar que los botones de los tabs anteriores guarden sus datos,
-# debes añadir la llamada a 'save_handshake_to_db' dentro de las acciones de los botones:
-# -> En la línea de 'run_audit' (Alice/Bob):
-#    save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
-# -> En la línea de 'trigger_fixer' (MERA Fixer Override):
-#    save_handshake_to_db("MERA_FIXER", g_param, 0.0931, 0.36570, "🛡️ SOBERANO (CFT VALIDATED)")
-
-# Cargar y desplegar la base de datos histórica en tiempo real
 try:
     df_historical = pd.read_csv(DB_FILE)
     
     if not df_historical.empty:
-        # Desplegar la bitácora con los registros más recientes primero
         st.dataframe(df_historical.iloc[::-1], use_container_width=True, hide_index=True)
         
-        # Botón nativo de descarga para exportar el CSV local a tu máquina
         csv_data = df_historical.to_csv(index=False).encode('utf-8')
         st.download_button(
             label="📥 EXPORT COMPLETE DATA LOG (CSV)",
