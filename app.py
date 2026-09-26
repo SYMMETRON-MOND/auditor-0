@@ -76,7 +76,41 @@ with tab1:
     
     col_run1, col_run2 = st.columns([1, 3])
     with col_run1:
-        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True)
+        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True)     # --- BLOQUES DE ENTRADA PARA ALICE O BOB ---
+    st.markdown("---")
+    st.markdown("#### 👤 IDENTITY INTERACTION BLOCK")
+    
+    col_ident, col_role = st.columns([1, 3])
+    with col_ident:
+        actor = st.selectbox("Select Identity Entity", ["Alice", "Bob"], help="System characters interacting with the Axiomatic Guardrail.")
+    with col_role:
+        st.markdown(f"**Entity Selected:** `{actor}` // *Role: Protocol Operator / External Agent*")
+
+    # Entrada de Script/Código basada en texto puro
+    input_script = st.text_area(
+        f"Input script or command prompt for {actor}:",
+        value=f"# Script payload from {actor}\ndef process_data():\n    return 'Sovereign state verified'",
+        height=150,
+        help="Input code or technical details to pass through the Symmetron Proca validation pipeline."
+    )
+
+    # Botón para auditar la entrada del personaje
+    if st.button(f"🔍 AUDIT SCRIPT FROM {actor.upper()}", use_container_width=True):
+        add_log(f"Intercepting packet injection stream from target: {actor}...")
+        time.sleep(0.5)
+        
+        # Lógica de validación del guardrail basada en el texto introducido
+        if "false" in input_script.lower() or "anomaly" in input_script.lower():
+            add_log(f"[WARNING] {actor} injected non-sovereign parameters or anomalies.")
+            st.session_state.system_status = "❌ FAILED (ANOMALY DETECTED)"
+            st.toast(f"Security Alert: {actor}'s script violated the axiomatic guardrail!", icon="🚨")
+        else:
+            add_log(f"[SUCCESS] {actor}'s script passed the 4D MERA geometric filter.")
+            st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
+            st.toast(f"Structure verified for {actor}.", icon="✅")
+            
+        st.rerun()
+
         clear_logs = st.button("🗑️ CLEAR TERMINAL", use_container_width=True)
         
         if clear_logs:
