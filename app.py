@@ -110,8 +110,8 @@ with tab1:
 
     # Botón para auditar la entrada del personaje
    if st.button(f"🔍 AUDIT SCRIPT FROM {actor.upper()}", use_container_width=True):
-       add_log(f"Intercepting packet injection stream from target: {actor}...")
-       time.sleep(0.5)
+        add_log(f"Intercepting packet injection stream from target: {actor}...")
+        time.sleep(0.5)
 
     # LÓGICA DE VALIDACIÓN (Tus ifs de control de anomalías...)
     if "false" in input_script.lower() or "anomaly" in input_script.lower():
