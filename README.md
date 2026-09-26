@@ -9,7 +9,7 @@
 
 ---
 
-## What is AUDITOR-0?
+## What is AUDITOR-0-1
 
 AUDITOR-0 verifies whether a system preserves its **topological fixed point** under renormalization. Based on the RG-S / R5+ framework, it audits:
 
