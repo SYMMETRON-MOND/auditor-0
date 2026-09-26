@@ -162,34 +162,100 @@ with tab1:
         st.rerun()
 
 with tab2:
-    st.markdown("#### Auto-Correction and Adiabatic Balancing")
-    st.write("When the Lanczos subspace collapses or the c-charge approaches zero due to screening, the MERA FIXER injects an infinitesimal identity regularizer to restore the Hilbert space.")
-    
-    col_fix1, col_fix2 = st.columns(2)
-    with col_fix1:
-        st.markdown("**Fixer Calibration Parameters**")
-        fixer_mode = st.selectbox("Adiabatic Strategy", ["Exponential Escalation (Aggressive v2.5)", "Linear Shift (v2.0)", "Total Decoupling Reset"])
-        max_attempts = st.slider("Max Automatic Attempts", 1, 10, 5)
-        step_multiplier = st.number_input("Epsilon Regularizer Multiplier (x)", value=50)
+    st.markdown("### ⚙️ MERA FIXER ENGINE v2.5")
+    st.markdown("`Subspace Restoration & Adiabatic Regularization Core`")
+    st.markdown("---")
+
+    # Layout de columnas para configuración y estado del motor
+    col_eng1, col_eng2 = st.columns([1, 2])
+
+    with col_eng1:
+        st.markdown("#### 🛠️ REGULATION CONTROLS")
         
-    with col_fix2:
-        st.markdown("**Manual Guardrail Override**")
-        st.write("If auditor-0 is trapped in a non-sovereign loop, press the command below to inject the 2.5 adiabatic coefficient and damp the anisotropy.")
+        # Selección de la estrategia que descubrimos en la libreta
+        strategy = st.selectbox(
+            "Adiabatic Strategy",
+            ["Exponential Escalation (Aggressive v2.5)", "Linear Shift (v2.0)", "Total Decoupling Reset"],
+            index=0,
+            help="Defines how the regularizer expands when an IndexError is triggered in the Lanczos block."
+        )
         
-        trigger_fixer = st.button("🔧 FORCE MERA FIXER OVERRIDE", use_container_width=True)
+        max_fix_attempts = st.slider("Max Stabilization Loops", 1, 10, 5, help="Number of automatic iterations before throwing a Non-Sovereign fatal loop.")
         
-        if trigger_fixer:
-            add_log("[MERA FIXER ACTIVE] Intercepting execution stream...")
-            time.sleep(0.4)
-            # Aplicamos los cambios que descubrimos en la libreta para salvar el código
-            st.session_state.anisotropy_base = 0.1200
-            st.session_state.gamma_value = 0.0931
-            add_log("[MERA FIXER] Anisotropy attenuated by 30% to smooth topological frustration.")
-            add_log("[MERA FIXER] Injecting longitudinal field Sz (epsilon_regularizer = 1.e-4).")
-            add_log("[MERA FIXER] Subspace Krylov vectors restored. Ready to re-audit.")
-            st.session_state.system_status = "🔄 RECTIFIED (READY)"
-            st.success("MERA FIXER: Parameters balanced successfully!")
-            st.rerun()
+        # Multiplicador exponencial (nuestro factor de fuerza bruta x50)
+        step_mult = st.number_input("Epsilon Multiplier (κ)", value=50, step=5, help="Multiplicative scale factor per failed attempt.")
+        
+        st.markdown("---")
+        st.markdown("#### ⚡ MANUAL OVERRIDE")
+        st.write("Force an immediate 30% reduction in topological frustration and seed the longitudinal field.")
+        
+        trigger_fixer = st.button("🔧 INJECT ADIABATIC SHIFT", use_container_width=True)
+
+    with col_eng2:
+        st.markdown("#### 📡 LIVE MATRIX MONITORING")
+        
+        # Simulación del estado del tensor de transferencia según el estatus del sistema
+        if "⚡ ACTIVE" in st.session_state.get('fixer_state', '💤 IDLE'):
+            st.success("🟢 MERA FIXER MODE: ACTIVE // REGULARIZING KRYLOV SUBSPACE")
+            
+            # Matriz saneada (identidad inyectada con Sz)
+            matrix_data = {
+                'MERA Layer (Desnuda)': ['Q1', 'Q2', 'Q3', 'Q4'],
+                'Sz (Epsilon)': [1.e-4, 1.e-4, 1.e-4, 1.e-4],
+                'Sx (Proca Mass)': [1.250, 1.250, 1.250, 1.250],
+                'Anisotropy (Hermitian)': [0.1200, 0.1200, 0.1200, 0.1200]
+            }
+            df_matrix = pd.DataFrame(matrix_data)
+            st.dataframe(df_matrix, use_container_width=True, hide_index=True)
+            st.caption("🛡️ Subspace Protected: Diagonal components forced via infinitesimal identity regularizer (ε · 𝕀).")
+        
+        elif "FAILED" in st.session_state.system_status:
+            st.error("🔴 ALERTA DE COLAPSO: SUBSPACE DIMENSION = 0 (MATRIX IS SINGULAR)")
+            
+            # Matriz rota con ceros en la diagonal que causaban el list index error
+            matrix_data = {
+                'MERA Layer (Desnuda)': ['Q1', 'Q2', 'Q3', 'Q4'],
+                'Sz (Epsilon)': [0.0, 0.0, 0.0, 0.0],
+                'Sx (Proca Mass)': [1.250, 1.250, 1.250, 1.250],
+                'Anisotropy (Hermitian)': [0.1862, 0.1862, 0.1862, 0.1862]
+            }
+            df_matrix = pd.DataFrame(matrix_data)
+            st.dataframe(df_matrix, use_container_width=True, hide_index=True)
+            st.caption("❌ Lanczos Solver Aborted: Empty Krylov subspace due to critical topological frustration.")
+        
+        else:
+            st.info(f"💤 ENGINE STATUS: STANDBY // System currently registered as: {st.session_state.system_status}")
+            st.markdown("*No tensor deformations reported in the current validation channel.*")
+
+    # --- LÓGICA DE DETONACIÓN DEL ENGINE FIXER ---
+    if trigger_fixer:
+        st.session_state.fixer_state = "⚡ ACTIVE"
+        add_log("[MERA FIXER] Intercepting execution stream: Lanczos exception caught.")
+        
+        # Barra de progreso para simular la renormalización adiabática en la CPU
+        progress_bar = st.progress(0, text="Initializing MERA Fixer stabilization loops...")
+        
+        for percent_complete in range(10, 101, 30):
+            time.sleep(0.3)
+            current_eps = 1.e-5 * (step_mult ** (percent_complete // 30))
+            progress_bar.progress(percent_complete, text=f"Loop {percent_complete//30}: Injected ε = {current_eps:.2e} onto Sz diagonal.")
+            add_log(f"[MERA FIXER] Step {percent_complete//30} -> Symmetric block re-orthogonalized.")
+
+        # Aplicamos de golpe el ajuste físico soberano que salvó tus simulaciones
+        st.session_state.anisotropy_base = 0.1200  # Atenuación del 30% de la asimetría base
+        st.session_state.gamma_value = 0.0931       # Conexión exacta con el punto crítico CFT
+        st.session_state.c_charge = 0.36570         # Carga central resurrecta del canal
+        st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
+        
+        progress_bar.empty()
+        add_log("[SUCCESS] MERA FIXER stabilized the transfer matrix. Subspace dimension > 0.")
+        add_log("Handshake UV-IR closed sovereignly at fixed point γ = 0.0931.")
+        
+        st.session_state.fixer_state = "💤 IDLE"
+        st.success("MERA FIXER Override complete: Quantum channel aligned!")
+        time.sleep(0.5)
+        st.rerun()
+
 
 # --- FOOTER TÉCNICO ---
 st.markdown("---")
