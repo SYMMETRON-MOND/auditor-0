@@ -58,14 +58,25 @@ st.markdown("---")
 
 # Muestra de métricas principales del Handshake cuántico
 col1, col2, col3, col4 = st.columns(4)
+# --- MUESTRA DE MÉTRICAS PRINCIPALES DEL HANDSHAKE ---
+col1, col2, col3, col4 = st.columns([2, 1, 1, 1]) # Ampliamos la proporción de la primera columna
+
 with col1:
-    st.metric(label="System Status", value=st.session_state.system_status)
+    # Usamos markdown estilizado en lugar de st.metric para evitar el truncamiento ("CFT Vali...")
+    if "SOBERANO" in st.session_state.system_status:
+        st.markdown(f"**System Status**\n<div style='font-family:\"Courier New\"; font-size:22px; color:#00ffcc; font-weight:bold; background-color:#0e1117; padding:5px; border-radius:5px;'>{st.session_state.system_status}</div>", unsafe_allow_html=True)
+    elif "FAILED" in st.session_state.system_status:
+        st.markdown(f"**System Status**\n<div style='font-family:\"Courier New\"; font-size:22px; color:#ff4b4b; font-weight:bold; background-color:#0e1117; padding:5px; border-radius:5px;'>{st.session_state.system_status}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"**System Status**\n<div style='font-family:\"Courier New\"; font-size:22px; color:#ffcc00; font-weight:bold; background-color:#0e1117; padding:5px; border-radius:5px;'>{st.session_state.system_status}</div>", unsafe_allow_html=True)
+
 with col2:
     st.metric(label="Channel γ (Handshake Point)", value=f"{st.session_state.gamma_value:.4f}")
 with col3:
     st.metric(label="Extracted c-Charge", value=f"{st.session_state.c_charge:.5f}")
 with col4:
     st.metric(label="Anisotropy Ratio", value=f"{st.session_state.anisotropy_base:.4f}")
+
 
 st.markdown("### 🖥️ COGNITIVE AUDIT CORE")
 
