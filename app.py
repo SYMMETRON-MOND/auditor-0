@@ -5,7 +5,7 @@ import time
 
 # Configuración de página optimizada con estética técnica y minimalista
 st.set_page_config(
-    page_title="AUDITOR-0 // MERA GUARDRAIL",
+    page_title="AUDITOR-0-1// MERA GUARDRAIL",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
