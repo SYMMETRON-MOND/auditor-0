@@ -87,7 +87,10 @@ with tab1:
     
     col_run1, col_run2 = st.columns([1, 3])
     with col_run1:
-        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True)     # --- BLOQUES DE ENTRADA PARA ALICE O BOB ---
+        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True, save_handshake_to_db(...))    
+        
+    
+    # --- BLOQUES DE ENTRADA PARA ALICE O BOB ---
     st.markdown("---")
     st.markdown("#### 👤 IDENTITY INTERACTION BLOCK")
     
@@ -230,7 +233,7 @@ with tab2:
     # --- LÓGICA DE DETONACIÓN DEL ENGINE FIXER ---
     if trigger_fixer:
         st.session_state.fixer_state = "⚡ ACTIVE"
-        add_log("[MERA FIXER] Intercepting execution stream: Lanczos exception caught.")
+        add_log("[MERA FIXER] Intercepting execution stream: Lanczos exception caught.", save_handshake_to_db(...) )
         
         # Barra de progreso para simular la renormalización adiabática en la CPU
         progress_bar = st.progress(0, text="Initializing MERA Fixer stabilization loops...")
