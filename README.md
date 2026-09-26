@@ -41,7 +41,7 @@ The same Gödel Guardrail is used for all languages. Only the mapping
 
 ## Live Demo
 
-Try AUDITOR-0-1 in your browser: [auditor-0.onrender.com](https://auditor-0.onrender.com)
+Try AUDITOR-0-1 in your browser: [auditor-0-1.onrender.com](https://auditor-0.onrender.com)
 
 No installation required. Paste any Python code and the guardrail will audit it in real time.
 
