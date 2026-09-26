@@ -232,7 +232,7 @@ with tab2:
     # --- LÓGICA DE DETONACIÓN DEL ENGINE FIXER ---
     if trigger_fixer:
         st.session_state.fixer_state = "⚡ ACTIVE"
-        add_log("[MERA FIXER] Intercepting execution stream: Lanczos exception caught.", save_handshake_to_db(...) )
+        add_log("[MERA FIXER] Intercepting execution stream: Lanczos exception caught.")
         
         # Barra de progreso para simular la renormalización adiabática en la CPU
         progress_bar = st.progress(0, text="Initializing MERA Fixer stabilization loops...")
