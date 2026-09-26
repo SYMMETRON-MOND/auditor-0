@@ -119,7 +119,7 @@ with tab1:
     else:
         st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
 
-    # RECTIFICACIÓN: El guardado va aquí abajo, alineado con la indentación interna
+    # RECTIFICACIÓN:
     save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
     st.rerun()
 
