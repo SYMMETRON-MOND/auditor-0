@@ -258,10 +258,66 @@ with tab2:
 
 
 # --- FOOTER TÉCNICO ---
+# --- MÓDULO DE BASE DE DATOS Y BITÁCORA EN CSV ---
+st.markdown("---")
+st.markdown("### 💾 HISTORICAL HANDSHAKE LOG (CSV DATABASE)")
+st.markdown("`Persistent storage for multi-scale tensor field validations`")
+
+# Nombre del archivo físico en el servidor de Render
+DB_FILE = "auditor0_handshake_database.csv"
+
+# Inicializar archivo CSV si no existe para evitar errores de lectura
+try:
+    pd.read_csv(DB_FILE)
+except FileNotFoundError:
+    df_init = pd.DataFrame(columns=["Timestamp", "Operator", "g_Param", "Gamma_Point", "Extracted_c", "System_Status"])
+    df_init.to_csv(DB_FILE, index=False)
+
+# Función del MERA-Fixer para inyectar y persistir registros en caliente
+def save_handshake_to_db(operator, g, gamma, c_charge, status):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    new_record = pd.DataFrame([{
+        "Timestamp": timestamp,
+        "Operator": operator,
+        "g_Param": f"{g:.3f}",
+        "Gamma_Point": f"{gamma:.4f}",
+        "Extracted_c": f"{c_charge:.5f}",
+        "System_Status": status
+    }])
+    # Append limpio al CSV sin cargar todo en memoria RAM
+    new_record.to_csv(DB_FILE, mode='a', header=False, index=False)
+
+# Para asegurar que los botones de los tabs anteriores guarden sus datos,
+# debes añadir la llamada a 'save_handshake_to_db' dentro de las acciones de los botones:
+# -> En la línea de 'run_audit' (Alice/Bob):
+#    save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
+# -> En la línea de 'trigger_fixer' (MERA Fixer Override):
+#    save_handshake_to_db("MERA_FIXER", g_param, 0.0931, 0.36570, "🛡️ SOBERANO (CFT VALIDATED)")
+
+# Cargar y desplegar la base de datos histórica en tiempo real
+try:
+    df_historical = pd.read_csv(DB_FILE)
+    
+    if not df_historical.empty:
+        # Desplegar la bitácora con los registros más recientes primero
+        st.dataframe(df_historical.iloc[::-1], use_container_width=True, hide_index=True)
+        
+        # Botón nativo de descarga para exportar el CSV local a tu máquina
+        csv_data = df_historical.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 EXPORT COMPLETE DATA LOG (CSV)",
+            data=csv_data,
+            file_name=f"auditor0_historical_audit_{time.strftime('%Y%m%d')}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+    else:
+        st.info("The persistent database file is empty. Execute an audit block to stream data.")
+except Exception as e:
+    st.error(f"Database linkage anomaly detected: {str(e)}")
+
 st.markdown("---")
 st.caption("🌐 Production Environment Node // Connected via Private PAT // Ax Guardrail active.")
-
-
 
 st.markdown("---")
 st.caption("AUDITOR-0 · Based on the RG-S / R5+ framework by Juan José Arroyo Ramírez")
