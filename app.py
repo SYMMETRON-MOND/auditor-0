@@ -87,7 +87,7 @@ with tab1:
     
     col_run1, col_run2 = st.columns([1, 3])
     with col_run1:
-        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True, save_handshake_to_db(...))    
+        run_audit = st.button("🚀 EXECUTE QUANTUM AUDIT", use_container_width=True,)    
         
     
     # --- BLOQUES DE ENTRADA PARA ALICE O BOB ---
@@ -109,21 +109,20 @@ with tab1:
     )
 
     # Botón para auditar la entrada del personaje
-    if st.button(f"🔍 AUDIT SCRIPT FROM {actor.upper()}", use_container_width=True):
-        add_log(f"Intercepting packet injection stream from target: {actor}...")
-        time.sleep(0.5)
-        
-        # Lógica de validación del guardrail basada en el texto introducido
-        if "false" in input_script.lower() or "anomaly" in input_script.lower():
-            add_log(f"[WARNING] {actor} injected non-sovereign parameters or anomalies.")
-            st.session_state.system_status = "❌ FAILED (ANOMALY DETECTED)"
-            st.toast(f"Security Alert: {actor}'s script violated the axiomatic guardrail!", icon="🚨")
-        else:
-            add_log(f"[SUCCESS] {actor}'s script passed the 4D MERA geometric filter.")
-            st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
-            st.toast(f"Structure verified for {actor}.", icon="✅")
-            
-        st.rerun()
+   if st.button(f"🔍 AUDIT SCRIPT FROM {actor.upper()}", use_container_width=True):
+    add_log(f"Intercepting packet injection stream from target: {actor}...")
+    time.sleep(0.5)
+
+    # LÓGICA DE VALIDACIÓN (Tus ifs de control de anomalías...)
+    if "false" in input_script.lower() or "anomaly" in input_script.lower():
+        st.session_state.system_status = "❌ FAILED (ANOMALY DETECTED)"
+    else:
+        st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
+
+    # RECTIFICACIÓN: El guardado va aquí abajo, alineado con la indentación interna
+    save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
+    st.rerun()
+
 
         clear_logs = st.button("🗑️ CLEAR TERMINAL", use_container_width=True)
         
