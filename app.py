@@ -120,8 +120,8 @@ with tab1:
         st.session_state.system_status = "🛡️ SOBERANO (CFT VALIDATED)"
 
     # RECTIFICACIÓN:
-    save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
-    st.rerun()
+        save_handshake_to_db(actor, g_param, st.session_state.gamma_value, st.session_state.c_charge, st.session_state.system_status)
+        st.rerun()
 
 
         clear_logs = st.button("🗑️ CLEAR TERMINAL", use_container_width=True)
