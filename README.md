@@ -1,4 +1,4 @@
-# AUDITOR-0
+# AUDITOR-0-1
 
 **A Gödel Guardrail for neural networks based on the RG-S framework.**
 
@@ -11,7 +11,7 @@
 
 ## What is AUDITOR-0-1
 
-AUDITOR-0 verifies whether a system preserves its **topological fixed point** under renormalization. Based on the RG-S / R5+ framework, it audits:
+AUDITOR-0-1 verifies whether a system preserves its **topological fixed point** under renormalization. Based on the RG-S / R5+ framework, it audits:
 
 - **Code** (Python scripts)
 - **Neural networks** (runtime guardrails)
@@ -20,7 +20,7 @@ A system that preserves the fixed point (γ = 0.0931) is **true**. A system that
 
 **Text auditing is in development** and will be available in a ## Supported Languages
 
-AUDITOR-0 currently supports:
+AUDITOR-0-1 currently supports:
 
 - **Python** ✅ (available now)
 
@@ -41,7 +41,7 @@ The same Gödel Guardrail is used for all languages. Only the mapping
 
 ## Live Demo
 
-Try AUDITOR-0 in your browser: [auditor-0.onrender.com](https://auditor-0.onrender.com)
+Try AUDITOR-0-1 in your browser: [auditor-0.onrender.com](https://auditor-0.onrender.com)
 
 No installation required. Paste any Python code and the guardrail will audit it in real time.
 
@@ -53,5 +53,5 @@ No installation required. Paste any Python code and the guardrail will audit it 
 
 ```bash
 git clone https://github.com/SYMMETRON-MOND/auditor-0.git
-cd auditor-0
+cd auditor-0-1
 pip install -r requirements.txt
